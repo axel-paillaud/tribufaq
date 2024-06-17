@@ -24,13 +24,13 @@ class AdminTribufaqQuestionController extends ModuleAdminController
 
             ],
             'question' => [
-                'title' => $this->module->l('question'),
+                'title' => $this->module->l('Question'),
                 'align' => 'left',
                 'lang' => true,
             ],
 
-            'answer' => [
-                'title' => $this->module->l('answer'),
+            'response' => [
+                'title' => $this->module->l('Answer'),
                 'align' => 'left',
                 'lang' => true,
             ],
@@ -68,7 +68,7 @@ class AdminTribufaqQuestionController extends ModuleAdminController
         //Bouton d'ajout
         $this->page_header_toolbar_btn['new'] = array(
             'href' => self::$currentIndex . '&add' . $this->table . '&token=' . $this->token,
-            'desc' => $this->module->l('Add a question'),
+            'desc' => $this->module->l('Ajouter une question/réponse'),
             'icon' => 'process-icon-new'
         );
 
@@ -81,10 +81,24 @@ class AdminTribufaqQuestionController extends ModuleAdminController
     public function renderForm()
     {
         $this->loadObject(true);
+
+        $this->loadObject(true);
+        // Obtention des catégories pour la liste déroulante
+        $categories = Db::getInstance()->executeS('SELECT id_tribufaq_category, name FROM ' . _DB_PREFIX_ . 'tribufaq_category_lang WHERE id_lang = ' . (int)$this->context->language->id);
+
+        // Formatage des options pour la liste déroulante
+        $category_options = [];
+        foreach ($categories as $category) {
+            $category_options[] = [
+                'id' => $category['id_tribufaq_category'],
+                'name' => $category['name']
+            ];
+        }
+
         // définition du formulaire et champs
         $this->fields_form = [
             'legend' => [
-                'title' => $this->module->l('Add a question/answer'),
+                'title' => $this->module->l('Ajouter une question/réponse'),
                 'icon' => 'icon-cog'
             ],
 
@@ -99,9 +113,20 @@ class AdminTribufaqQuestionController extends ModuleAdminController
                 [
                     'type' => 'text',
                     'label' => $this->module->l('Answer'),
-                    'name' => 'answer',
+                    'name' => 'response',
                     'lang' => true,
                     'required' => true,
+                ],
+                [
+                    'type' => 'select',
+                    'label' => $this->module->l('Category'),
+                    'name' => 'id_tribufaq_category',
+                    'required' => true,
+                    'options' => [
+                        'query' => $category_options,
+                        'id' => 'id',
+                        'name' => 'name'
+                    ]
                 ],
                 [
                     'type' => 'switch',
@@ -132,5 +157,23 @@ class AdminTribufaqQuestionController extends ModuleAdminController
         ];
 
         return parent::renderForm();
+    }
+
+    public function ajaxProcessToggleActiveTribufaqCategory()
+    {
+        $tribufaqQuestion = new TribufaqQuestion(Tools::getValue('id_tribufaq_question'));
+        $tribufaqQuestion->active = !$tribufaqQuestion->active;
+
+        if ($tribufaqQuestion->save()) {
+            die(Tools::jsonEncode([
+                'success' => 1,
+                'text' => $this->trans('The settings have been successfully updated.', [], 'Admin.Notifications.Success'),
+            ]));
+        } else {
+            die(Tools::jsonEncode([
+                'success' => 0,
+                'text' => $this->trans('Unable to update settings.', [], 'Admin.Notifications.Error'),
+            ]));
+        }
     }
 }
