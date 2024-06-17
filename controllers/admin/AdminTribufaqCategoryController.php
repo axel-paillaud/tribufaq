@@ -16,7 +16,7 @@ class AdminTribufaqCategoryController extends ModuleAdminController
         $this->table = 'tribufaq_category'; //nom de la table
         $this->identifier = 'id_tribufaq_category'; //primary key de la table
         $this->default_form_language = $this->context->language->id;
-        $this->bootstrap = true;
+        // $this->bootstrap = true;
         $this->controller_name = 'AdminTribufaqCategoryController';
         $this->className = 'TribufaqCategory'; //nom de la classe de l'objet
         $this->lang = true;
