@@ -192,37 +192,44 @@ class TribuFaq extends Module
 
     public function hookDisplayHome()
     {
-        // Get number of quesions to show from the module config
-        $questionToShow = (int)Configuration::get('TRIBUFAQ_QUESTIONS_TO_SHOW');
+    // Get number of questions to show per category from the module config
+    $questionToShowPerCategory = (int)Configuration::get('TRIBUFAQ_QUESTIONS_TO_SHOW');
 
-        // Get questions with associated categories
-        $sql = '
-            SELECT q.id_tribufaq_question, q.id_tribufaq_category, ql.question, ql.response, cl.name as category_name
+    // Get all active categories
+    $sqlCategories = '
+        SELECT c.id_tribufaq_category, cl.name as category_name
+        FROM ' . _DB_PREFIX_ . 'tribufaq_category c
+        JOIN ' . _DB_PREFIX_ . 'tribufaq_category_lang cl ON c.id_tribufaq_category = cl.id_tribufaq_category
+        WHERE c.active = 1 AND cl.id_lang = ' . (int)$this->context->language->id;
+
+    $categories = Db::getInstance()->executeS($sqlCategories);
+
+    $faqs = [];
+
+    // For each category, limit question based on the config module value
+    foreach ($categories as $category) {
+        $sqlQuestions = '
+            SELECT q.id_tribufaq_question, ql.question, ql.response
             FROM ' . _DB_PREFIX_ . 'tribufaq_question q
             JOIN ' . _DB_PREFIX_ . 'tribufaq_question_lang ql ON q.id_tribufaq_question = ql.id_tribufaq_question
-            JOIN ' . _DB_PREFIX_ . 'tribufaq_category_lang cl ON q.id_tribufaq_category = cl.id_tribufaq_category
-            WHERE q.active = 1 AND ql.id_lang = ' . (int)$this->context->language->id . ' AND cl.id_lang = ' . (int)$this->context->language->id . '
+            WHERE q.active = 1 AND q.id_tribufaq_category = ' . (int)$category['id_tribufaq_category'] . '
+            AND ql.id_lang = ' . (int)$this->context->language->id . '
             ORDER BY q.date_add DESC
-            LIMIT ' . (int)$questionToShow;
+            LIMIT ' . (int)$questionToShowPerCategory;
 
-        $questions = Db::getInstance()->executeS($sql);
+        $questions = Db::getInstance()->executeS($sqlQuestions);
 
-        // Structured table data
-        $faqs = [];
-        foreach ($questions as $question) {
-            $categoryId = $question['id_tribufaq_category'];
-            if (!isset($faqs[$categoryId])) {
-                $faqs[$categoryId] = [
-                    'category_name' => $question['category_name'],
-                    'questions' => []
+        // Populate faqs table
+        $faqs[] = [
+            'category_name' => $category['category_name'],
+            'questions' => array_map(function ($question) {
+                return [
+                    'question' => $question['question'],
+                    'response' => $question['response']
                 ];
-            }
-            $faqs[$categoryId]['questions'][] = [
-                'question' => $question['question'],
-                'response' => $question['response']
-            ];
-        }
-
+            }, $questions)
+        ];
+    }
         // Set index keys start from 0
         $faqs = array_values($faqs);
 
