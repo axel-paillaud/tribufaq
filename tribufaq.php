@@ -24,6 +24,8 @@ class TribuFaq extends Module
         $this->displayName = $this->l('Tribu FAQ');
         $this->description = $this->l('Affiche une FAQ catégorisée sur la page d\'accueil');
 
+        $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
+
         $this->moduleTabs = [
             [
                 'name'              => $this->l('Gestion FAQ'),
