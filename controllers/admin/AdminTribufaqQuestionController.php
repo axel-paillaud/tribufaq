@@ -35,11 +35,12 @@ class AdminTribufaqQuestionController extends ModuleAdminController
                 'lang' => true,
             ],
 
-            'category' => [
+            // TODO show category associated to question/answer
+/*             'category' => [
                 'title' => $this->module->l('Category'),
                 'align' => 'left',
                 'lang' => true,
-            ],
+            ], */
 
             'date_add' => [
                 'title' => $this->module->l('Creation date'),
