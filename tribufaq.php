@@ -117,6 +117,45 @@ class TribuFaq extends Module
 
     public function hookDisplayHome()
     {
+        // Récupération du nombre de questions à afficher depuis la configuration du module
+        // $questionToShow = (int)Configuration::get('TRIBUFAQ_QUESTIONS_TO_SHOW', 5);
+        $questionToShow = 5;
+
+        // Récupération des questions et des catégories associées
+        $sql = '
+            SELECT q.id_tribufaq_question, q.id_tribufaq_category, ql.question, ql.response, cl.name as category_name
+            FROM ' . _DB_PREFIX_ . 'tribufaq_question q
+            JOIN ' . _DB_PREFIX_ . 'tribufaq_question_lang ql ON q.id_tribufaq_question = ql.id_tribufaq_question
+            JOIN ' . _DB_PREFIX_ . 'tribufaq_category_lang cl ON q.id_tribufaq_category = cl.id_tribufaq_category
+            WHERE q.active = 1 AND ql.id_lang = ' . (int)$this->context->language->id . ' AND cl.id_lang = ' . (int)$this->context->language->id . '
+            ORDER BY q.date_add DESC
+            LIMIT ' . (int)$questionToShow;
+
+        $questions = Db::getInstance()->executeS($sql);
+
+        // Structurer les données en un tableau associatif
+        $faqs = [];
+        foreach ($questions as $question) {
+            $categoryId = $question['id_tribufaq_category'];
+            if (!isset($faqs[$categoryId])) {
+                $faqs[$categoryId] = [
+                    'category_name' => $question['category_name'],
+                    'questions' => []
+                ];
+            }
+            $faqs[$categoryId]['questions'][] = [
+                'question' => $question['question'],
+                'response' => $question['response']
+            ];
+        }
+
+        // Ré-indexer le tableau pour avoir des clés numériques
+        $faqs = array_values($faqs);
+
+        // Assignation des variables à Smarty
+        $this->context->smarty->assign([
+            'faqs' => $faqs,
+        ]);
 
         return $this->display(__FILE__,'displayHome.tpl');
     }

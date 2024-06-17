@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>tribufaq</name>
+    <displayName><![CDATA[Tribu FAQ]]></displayName>
+    <version><![CDATA[1.0]]></version>
+    <description><![CDATA[Affiche une FAQ cat&eacute;goris&eacute;e sur la page d&#039;accueil]]></description>
+    <author><![CDATA[Tribu and Co]]></author>
+    <tab><![CDATA[]]></tab>
+    <is_configurable>0</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>
