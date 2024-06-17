@@ -57,7 +57,6 @@ class AdminTribufaqQuestionController extends ModuleAdminController
 
         ];
 
-        //actions disponibles pour chaques lignes
         $this->addRowAction('edit');
         $this->addRowAction('delete');
     }
@@ -68,11 +67,11 @@ class AdminTribufaqQuestionController extends ModuleAdminController
     }
 
     /**
-     * Gestion de la toolbar
+     * Toolbar settings
      */
     public function initPageHeaderToolbar()
     {
-        //Bouton d'ajout
+        // 'Add question/answer' button
         $this->page_header_toolbar_btn['new'] = array(
             'href' => self::$currentIndex . '&add' . $this->table . '&token=' . $this->token,
             'desc' => $this->module->l('Ajouter une question/réponse'),
@@ -83,7 +82,7 @@ class AdminTribufaqQuestionController extends ModuleAdminController
     }
 
     /**
-     * Gestion du formulaire de création/édition
+     * Create and update form
      */
     public function renderForm()
     {
