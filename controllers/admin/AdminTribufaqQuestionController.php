@@ -83,6 +83,7 @@ class AdminTribufaqQuestionController extends ModuleAdminController
 
     /**
      * Create and update form
+     * @return string HTML Code
      */
     public function renderForm()
     {
