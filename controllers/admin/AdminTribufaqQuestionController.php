@@ -35,6 +35,12 @@ class AdminTribufaqQuestionController extends ModuleAdminController
                 'lang' => true,
             ],
 
+            'category' => [
+                'title' => $this->module->l('Category'),
+                'align' => 'left',
+                'lang' => true,
+            ],
+
             'date_add' => [
                 'title' => $this->module->l('Creation date'),
                 'align' => 'center',
@@ -83,10 +89,10 @@ class AdminTribufaqQuestionController extends ModuleAdminController
         $this->loadObject(true);
 
         $this->loadObject(true);
-        // Obtention des catégories pour la liste déroulante
+        // Get categories for the dropdown list
         $categories = Db::getInstance()->executeS('SELECT id_tribufaq_category, name FROM ' . _DB_PREFIX_ . 'tribufaq_category_lang WHERE id_lang = ' . (int)$this->context->language->id);
 
-        // Formatage des options pour la liste déroulante
+        // Format options for dropdown list
         $category_options = [];
         foreach ($categories as $category) {
             $category_options[] = [
@@ -95,7 +101,6 @@ class AdminTribufaqQuestionController extends ModuleAdminController
             ];
         }
 
-        // définition du formulaire et champs
         $this->fields_form = [
             'legend' => [
                 'title' => $this->module->l('Ajouter une question/réponse'),

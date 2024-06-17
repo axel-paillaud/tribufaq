@@ -78,6 +78,7 @@ class TribuFaq extends Module
             parent::install()
             && $this->registerHook('displayHome')
             && $this->registerHook('actionFrontControllerSetMedia')
+            && Configuration::updateValue('TRIBUFAQ_NAME', 'tribufaq')
             && ModuleClassUtility::installSql($this->queries)
             && ModuleClassUtility::installModuleTabs($this->name,$this->moduleTabs)
         );
@@ -92,6 +93,80 @@ class TribuFaq extends Module
             && ModuleClassUtility::removeTabByClassName('AdminParentTribufaq')
             && ModuleClassUtility::uninstallsql($this->queries)
         );
+    }
+
+    /**
+    * This method handles the module's configuration page
+    * @return string The page's HTML content
+    */
+    public function getContent()
+    {
+        $output = '';
+
+        // this part is executed only when the form is submitted
+        if (Tools::isSubmit('submit' . $this->name)) {
+            // retrieve the value set by the user
+            $configValue = (string) Tools::getValue('TRIBUFAQ_QUESTIONS_TO_SHOW');
+
+            // check that the value is valid
+            if (empty($configValue) || !Validate::isInt($configValue)) {
+                // invalid value, show an error
+                $output = $this->displayError($this->l('Invalid Configuration value'));
+            } else {
+                // value is ok, update it and display a confirmation message
+                Configuration::updateValue('TRIBUFAQ_QUESTIONS_TO_SHOW', $configValue);
+                $output = $this->displayConfirmation($this->l('Settings updated'));
+            }
+        }
+
+        // display any message, then the form
+        return $output . $this->displayForm();
+    }
+
+    /**
+    * Builds the configuration forms
+    * @return string HTML code
+    */
+    public function displayForm() 
+    {
+        // Init fields form array
+        $form = [
+            'form' => [
+                'legend' => [
+                    'title' => $this->l('Settings'),
+                ],
+                'input' => [
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('Number of question/answer to show'),
+                        'name' => 'TRIBUFAQ_QUESTIONS_TO_SHOW',
+                        'required' => true,
+                        'hint' => $this->l('Only numbers are allowed'),
+                    ],
+                ],
+                'submit' => [
+                    'title' => $this->l('Save'),
+                    'class' => 'btn btn-default pull-right',
+                ],
+            ],
+        ];
+
+        $helper = new HelperForm();
+
+        // Module, token and currentIndex
+        $helper->table = $this->table;
+        $helper->name_controller = $this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $this->name]);
+        $helper->submit_action = 'submit' . $this->name;
+
+        // Default language
+        $helper->default_form_language = $this->context->language->id;
+
+        // Load current value into the form
+        $helper->fields_value['TRIBUFAQ_QUESTIONS_TO_SHOW'] = Tools::getValue('TRIBUFAQ_QUESTIONS_TO_SHOW', Configuration::get('TRIBUFAQ_QUESTIONS_TO_SHOW'));
+
+        return $helper->generateForm([$form]);
     }
 
     public function hookActionFrontControllerSetMedia()
@@ -117,11 +192,10 @@ class TribuFaq extends Module
 
     public function hookDisplayHome()
     {
-        // Récupération du nombre de questions à afficher depuis la configuration du module
-        // $questionToShow = (int)Configuration::get('TRIBUFAQ_QUESTIONS_TO_SHOW', 5);
-        $questionToShow = 5;
+        // Get number of quesions to show from the module config
+        $questionToShow = (int)Configuration::get('TRIBUFAQ_QUESTIONS_TO_SHOW');
 
-        // Récupération des questions et des catégories associées
+        // Get questions with associated categories
         $sql = '
             SELECT q.id_tribufaq_question, q.id_tribufaq_category, ql.question, ql.response, cl.name as category_name
             FROM ' . _DB_PREFIX_ . 'tribufaq_question q
@@ -133,7 +207,7 @@ class TribuFaq extends Module
 
         $questions = Db::getInstance()->executeS($sql);
 
-        // Structurer les données en un tableau associatif
+        // Structured table data
         $faqs = [];
         foreach ($questions as $question) {
             $categoryId = $question['id_tribufaq_category'];
@@ -149,10 +223,10 @@ class TribuFaq extends Module
             ];
         }
 
-        // Ré-indexer le tableau pour avoir des clés numériques
+        // Set index keys start from 0
         $faqs = array_values($faqs);
 
-        // Assignation des variables à Smarty
+        // Set smarty variable
         $this->context->smarty->assign([
             'faqs' => $faqs,
         ]);
