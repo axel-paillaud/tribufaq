@@ -1,0 +1,134 @@
+.tribu-module-faq {
+    margin: 46px 0;
+}
+
+/* Accordéons :::::::::::::::::::::::::: */
+
+.accordion {
+    margin: 0;
+}
+.accordion + .accordion {
+    margin-top: 14px;
+}
+.accordion.active > .accordion__title svg {
+    transform: rotate(90deg);
+    transition: transform 200ms ease-in;
+}
+.accordion.active > .accordion__content {
+    height: auto;
+    max-height: 2000px;
+    padding-top: 18px;
+    padding-bottom: 8px;
+
+    transition: max-height 200ms ease-in;
+}
+.accordion__title {
+    display: block;
+    position: relative;
+
+    background-color: #ebebeb;
+    border: 1px solid #ebebeb;
+
+    margin: 0;
+    padding: 10px 32px 10px 10px;
+
+    width: 100%;
+
+    text-align: left;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+.accordion__title svg {
+    position: absolute;
+    right: 10px;
+
+    width: auto;
+
+    transform: rotate(0deg);
+    transition: transform 200ms ease-in;
+}
+.accordion__content {
+    height: 0;
+    max-height: 0;
+    overflow: hidden;
+
+    padding: 0px 22px 0px 22px;
+
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #ebebeb;
+
+    transition: max-height 200ms ease-in;
+}
+
+.accordion__content p {
+    color: inherit;
+}
+
+.accordion__content ul {
+    padding-left: 22px;
+    list-style-type: disc;
+}
+
+/* Catégorie de FAQ :::::::::::::::::::: */
+
+.faq__category {
+    margin: 28px 0;
+}
+
+.faq__category + .faq__category{
+    margin-top: 28px;
+}
+
+.faq__category-name {
+    padding: 14px 34px 14px 10px;
+
+    background-color: #fff;
+    border: 1px solid #ededed;
+
+    font-size: 1.25rem;
+}
+
+.faq__category-name svg {
+    top: calc(50% - 11px);
+
+    height: 22px;
+}
+
+.faq__category-accordions {
+    padding-right: 0;
+
+    background-color: rgba(0,0,0,0);
+    border: none;
+}
+
+@media screen and (max-width: 767px) {
+    .faq__category {
+        margin: 22px 0;
+    }
+    
+    .faq__category + .faq__category{
+        margin-top: 22px;
+    }
+    
+    .faq__category-name {
+        font-size: 1.125rem;
+    }
+}
+
+/* Accordéons de FAQ :::::::::::::::::::: */
+
+.faq__accordion-title {
+    background-color: #ebebeb;
+    border: 1px solid #ebebeb;
+
+    margin: 0;
+    padding: 10px 32px 10px 10px;
+}
+
+.faq__accordion-title svg {
+    top: calc(50% - 9px);
+
+    height: 18px;
+}
