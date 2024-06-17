@@ -80,7 +80,6 @@ class TribuFaq extends Module
             parent::install()
             && $this->registerHook('displayHome')
             && $this->registerHook('actionFrontControllerSetMedia')
-            && Configuration::updateValue('TRIBUFAQ_NAME', 'tribufaq')
             && ModuleClassUtility::installSql($this->queries)
             && ModuleClassUtility::installModuleTabs($this->name,$this->moduleTabs)
         );
