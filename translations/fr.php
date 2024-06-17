@@ -3,6 +3,7 @@
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{tribufaq}prestashop>tribufaq_876f23178c29dc2552c0b48bf23cd9bd'] = 'Êtes-vous sûr de vouloir désinstaller ce module ?';
+$_MODULE['<{tribufaq}prestashop>tribufaq_1d486e21be5e924a4c0f96503932d34e'] = 'Configuration incorrect (avez-vous utilisé uniquement des chiffres ?)';
 $_MODULE['<{tribufaq}prestashop>tribufaq_c888438d14855d7d96a2724ee9c306bd'] = 'Configuration mise à jour';
 $_MODULE['<{tribufaq}prestashop>tribufaq_f4f70727dc34561dfde1a3c529b6205c'] = 'Configuration';
 $_MODULE['<{tribufaq}prestashop>tribufaq_b622458111f525d60fe5cc7486b1c42b'] = 'Nombre de question/réponse à afficher';

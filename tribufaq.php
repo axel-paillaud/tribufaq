@@ -106,13 +106,13 @@ class TribuFaq extends Module
 
         // this part is executed only when the form is submitted
         if (Tools::isSubmit('submit' . $this->name)) {
-            // retrieve the value set by the user
+
             $configValue = (string) Tools::getValue('TRIBUFAQ_QUESTIONS_TO_SHOW');
 
-            // check that the value is valid
+            // check that the value is valid (integer)
             if (empty($configValue) || !Validate::isInt($configValue)) {
                 // invalid value, show an error
-                $output = $this->displayError($this->l('Invalid Configuration value'));
+                $output = $this->displayError($this->l('Invalid value, did you only use numbers?'));
             } else {
                 // value is ok, update it and display a confirmation message
                 Configuration::updateValue('TRIBUFAQ_QUESTIONS_TO_SHOW', $configValue);
